@@ -586,9 +586,12 @@ int writePngFileFromXcur (const XcursorDim width, const XcursorDim height,
     unsigned int red = (pixels[i]>>16) & 0xff;
     unsigned int green = (pixels[i]>>8) & 0xff;
     unsigned int blue = pixels[i] & 0xff;
-    red = (div (red * 256, alpha).quot) & 0xff;
-    green = (div (green * 256,  alpha).quot) & 0xff;
-    blue = (div (blue * 256, alpha).quot) & 0xff;
+    red = (div (red * 256, alpha).quot);
+    green = (div (green * 256,  alpha).quot);
+    blue = (div (blue * 256, alpha).quot);
+    red = (red > 0xff ? 0xff : red) & 0xff;
+    green = (green > 0xff ? 0xff : green) & 0xff;
+    blue = (blue > 0xff ? 0xff : blue) & 0xff;
     pix[i] = (alpha << 24) + (red << 16) + (green << 8) + blue;
   }
 
@@ -671,7 +674,7 @@ int saveConfAndPNGs (const XcursorImages* xcIs, const char* xcurFilePart, int su
   int ret;
   int count = 0;
   char pngName[PATH_MAX] = {0};
-  extern dry_run;
+  extern int dry_run;
   
   //Write comment on config-file.
   fprintf (conffp,"#size\txhot\tyhot\tPath to PNG image\tdelay\n");
